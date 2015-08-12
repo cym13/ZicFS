@@ -50,6 +50,7 @@ For example, let's say we have the following directory structure:
 Then DUB.mp3 will have the following tags:
 
 ::
+
     author = "LukHash"
     album  = "Psyche"
     title  = "DUB"
@@ -79,6 +80,7 @@ Command-line interface documentation
 ====================================
 
 ::
+
     ZicFS: Music tagging filesystem
 
     Usage: zicfs [-hf] MUSIC_DIR MOUNT_POINT
@@ -117,6 +119,7 @@ Roadmap
 =======
 
 ::
+
     [ ] Write a FUSE base mocking tagging functions
     [ ] Build mp3's ID3 by-directory tagging
     [ ] Build Vorbis comments by-directory tagging
