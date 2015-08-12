@@ -133,6 +133,12 @@ This program is under the GPLv3 License.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+Acknowledgement
+===============
+
+The FUSE base comes from http://www.stavros.io/posts/python-fuse-filesystem/
+(BSD licensed).
+
 Contact
 =======
 
