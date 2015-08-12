@@ -38,9 +38,9 @@ class Passthrough(Operations):
 
     def getattr(self, path, fh=None):
         st = os.lstat(self._full_path(path))
-        return dict((key, getattr(st, key))
-                     for key in ('st_atime', 'st_ctime', 'st_gid', 'st_mode',
-                                 'st_mtime', 'st_nlink', 'st_size', 'st_uid'))
+        return dict((key, getattr(st, key)) for key in
+                      ('st_atime', 'st_ctime', 'st_gid', 'st_mode', 'st_mtime',
+                       'st_nlink', 'st_size',  'st_uid', 'st_blocks'))
 
     def readdir(self, path, fh):
         full_path = self._full_path(path)
