@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 # From http://www.stavros.io/posts/python-fuse-filesystem/
 
-from __future__ import with_statement
-
 import os
 import sys
 import errno
 
 from fuse import FUSE, FuseOSError, Operations
 
+########################################
+# Filesystem
+########################################
 
 class Passthrough(Operations):
+    """ FUSE filesystem that acts as symlink and does nothing. """
+
     def __init__(self, root):
         self.root = root
 
@@ -120,8 +123,31 @@ class Passthrough(Operations):
         return self.flush(path, fh)
 
 
-def main(mountpoint, root):
-    FUSE(Passthrough(root), mountpoint, nothreads=True, foreground=True)
+class ZicFS(Passthrough):
+    """ FUSE filesystem managing music file metadata """
+
+    def rename(self, old, new):
+        fp_old = self._full_path(old)
+        fp_new = self._full_path(new)
+        tag_from_path(fp_old, new)
+        return os.rename(fp_old, fp_new)
+
+    def create(self, path, mode, fi=None):
+        result  = super().create(_full_path(path), mode, fi)
+        tag_from_path(path, path)
+        return result
+
+
+########################################
+# Tagger
+########################################
+
+
+def tag_from_path(old, new):
+    print("Tagging", old, "from path", new)
+
 
 if __name__ == '__main__':
-    main(sys.argv[2], sys.argv[1])
+    root       = sys.argv[1]
+    mountpoint = sys.argv[2]
+    FUSE(Passthrough(root), mountpoint, nothreads=True, foreground=True)
