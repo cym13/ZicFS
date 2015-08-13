@@ -106,6 +106,7 @@ Command-line interface documentation
             album:  Album's title
             track:  Track's title
             year:   Year of release
+            any:    Ignore this layer's name
 
 Dependencies
 ============
