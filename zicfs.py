@@ -43,7 +43,7 @@ from fuse import FUSE, FuseOSError, Operations
 ########################################
 
 class Passthrough(Operations):
-    """ FUSE filesystem that acts as symlink and does nothing. """
+    """ FUSE filesystem that acts as symlink to its root and does nothing. """
 
     def __init__(self, root):
         self.root = root
