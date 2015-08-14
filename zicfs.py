@@ -157,6 +157,10 @@ class Passthrough(Operations):
 class ZicFS(Passthrough):
     """ FUSE filesystem managing music file metadata """
 
+    def __init__(self, root, pattern):
+        self.pattern = pattern
+        return Passthrough.__init__(self, root)
+
     def rename(self, old, new):
         fp_old = self._full_path(old)
         fp_new = self._full_path(new)
@@ -164,7 +168,7 @@ class ZicFS(Passthrough):
         return os.rename(fp_old, fp_new)
 
     def create(self, path, mode, fi=None):
-        result  = super().create(_full_path(path), mode, fi)
+        result = Passthrough.create(self, self._full_path(path), mode, fi)
         tag_from_path(path, path)
         return result
 
