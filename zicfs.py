@@ -1,5 +1,6 @@
-#!/usr/bin/env python
-# From http://www.stavros.io/posts/python-fuse-filesystem/
+#!/usr/bin/env python2
+
+from __future__ import with_statement
 
 import os
 import sys
@@ -144,10 +145,10 @@ class ZicFS(Passthrough):
 
 
 def tag_from_path(old, new):
-    print("Tagging", old, "from path", new)
+    print "Tagging '" + old + "' from path '" + new + "'"
 
 
 if __name__ == '__main__':
     root       = sys.argv[1]
     mountpoint = sys.argv[2]
-    FUSE(Passthrough(root), mountpoint, nothreads=True, foreground=True)
+    FUSE(ZicFS(root), mountpoint, nothreads=True, foreground=True)
