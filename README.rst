@@ -121,7 +121,7 @@ Roadmap
 
 ::
 
-    [ ] Write a FUSE base mocking tagging functions
+    [+] Write a FUSE base mocking tagging functions
     [ ] Build mp3's ID3 by-directory tagging
     [ ] Build Vorbis comments by-directory tagging
     [ ] Add file-based additional tagging
