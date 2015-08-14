@@ -4,7 +4,7 @@ Description
 ZicFS is a FUSE filesystem to auto-tag music files based on where they are
 stored.
 
-It is written in python.
+It is written in python2 (because of fusepy dependance).
 
 **Work in progress**
 
@@ -112,7 +112,7 @@ Dependencies
 ============
 
 - Linux as ZicFS depends on FUSE which is Linux only.
-- fusepy
+- fusepy  (https://github.com/terencehonles/fusepy)
 - mutagen
 - docopt
 
@@ -140,8 +140,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 Acknowledgement
 ===============
 
-The FUSE base comes from http://www.stavros.io/posts/python-fuse-filesystem/
-(BSD licensed).
+The Passthrough FUSE base comes (with modifications) from
+http://www.stavros.io/posts/python-fuse-filesystem/ (BSD licensed).
 
 Contact
 =======
