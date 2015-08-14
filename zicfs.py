@@ -1,11 +1,41 @@
 #!/usr/bin/env python2
 
+"""
+ZicFS: Music tagging filesystem
+
+Usage: zicfs [-hf] MUSIC_DIR MOUNT_POINT
+
+Arguments:
+    MUSIC_DIR       Path to your music directory
+    MOUNT_POINT     Where to mount ZicFS
+
+Options:
+    -h, --help              Print this help and exit
+    -f, --foreground        Do not daemonize ZicFS
+    -p, --pattern PATTERN   Uses the directory architecture PATTERN
+                            instead of the default one.
+
+Patterns:
+    Defines how directories are laid out. The default one is:
+
+        %{author}/%{album}/%{track}
+
+    Available tags are:
+
+        author: Musician's name
+        album:  Album's title
+        track:  Track's title
+        year:   Year of release
+        any:    Ignore this layer's name
+"""
+
 from __future__ import with_statement
 
 import os
 import sys
 import errno
 
+from docopt import docopt
 from fuse import FUSE, FuseOSError, Operations
 
 ########################################
@@ -148,7 +178,19 @@ def tag_from_path(old, new):
     print "Tagging '" + old + "' from path '" + new + "'"
 
 
+########################################
+# Command Line Interface
+########################################
+
+def main():
+    args = docopt(__doc__)
+
+    args["--pattern"] = args.get("--pattern", "%{author}/%{album}/%{track}")
+
+    FUSE(ZicFS(args["MUSIC_DIR"], args["--pattern"])
+         args["MOUNT_POINT"],
+         nothreads=True,
+         foreground=args["--foreground"])
+
 if __name__ == '__main__':
-    root       = sys.argv[1]
-    mountpoint = sys.argv[2]
-    FUSE(ZicFS(root), mountpoint, nothreads=True, foreground=True)
+    main()
