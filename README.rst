@@ -96,17 +96,17 @@ Command-line interface documentation
                                 instead of the default one.
 
     Patterns:
-        Defines how directories are laid out. The default one is:
+        Pattern defines how directories are laid out.
+        Note that a file's name is always considered the tracks title.
+        The default pattern is:
 
-            %{author}/%{album}/%{track}
+            artist/album
 
-        Available tags are:
-
-            author: Musician's name
-            album:  Album's title
-            track:  Track's title
-            year:   Year of release
-            any:    Ignore this layer's name
+        Available format tags are:
+            artist:    Musician's name
+            album:     Album's title
+            year:      Year of release
+            any other: Ignore this layer's name
 
 Dependencies
 ============
