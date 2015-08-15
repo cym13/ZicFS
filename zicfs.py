@@ -186,12 +186,13 @@ def tag_from_path(old, new):
 # Command Line Interface
 ########################################
 
+
 def main():
     args = docopt(__doc__)
 
     args["--pattern"] = args.get("--pattern", "%{author}/%{album}/%{track}")
 
-    FUSE(ZicFS(args["MUSIC_DIR"], args["--pattern"])
+    FUSE(ZicFS(args["MUSIC_DIR"], args["--pattern"]),
          args["MOUNT_POINT"],
          nothreads=True,
          foreground=args["--foreground"])
