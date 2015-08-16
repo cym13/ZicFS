@@ -183,32 +183,34 @@ class ZicFS(Passthrough):
 def tag_from_path(path, pattern):
     print "Path: " + path
 
-    if not path.endswith(".mp3"):
-        return
-
-    audio = ID3(path)
     infos = parse_path(path, pattern)
 
-    mp3_fields = { "artist": TPE1,
-                   "album":  TALB,
-                   "track":  TIT2,
-                   "style":  TCON,
-                   "date":   TDRC }
+    if path.endswith(".mp3"):
+        audio = ID3(path)
 
-    for field in mp3_fields:
-        value = infos.get(field) or "None"
-        print field + ":" + value
-        if value:
-            audio.add(mp3_fields[field](encoding=3, text=value))
+        mp3_fields = { "artist": TPE1,
+                       "album":  TALB,
+                       "track":  TIT2,
+                       "style":  TCON,
+                       "date":   TDRC }
 
-    audio.save()
+        for field in mp3_fields:
+            value = infos.get(field) or "None"
+            print field + ":" + value
+            if value:
+                audio.add(mp3_fields[field](encoding=3, text=value))
+
+        audio.save()
 
 
 def parse_path(path, pattern):
     split_path    = [ x for x in path.split("/")[1:] if x ]
     split_pattern = [ x for x in pattern.split("/")  if x ]
 
-    infos = { "track" : split_path.pop().rsplit(".", 1)[0] }
+    # Doesn't look easier with regex...
+    track_title = split_path.pop().rsplit(".", 1)[0].rsplit(" - ", 1)[-1]
+
+    infos = { "track" : track_title }
 
     while split_path and split_pattern:
         infos[ split_pattern[0] ] = split_path[0]

@@ -31,6 +31,18 @@ Tags are set from top to bottom. If you are using the default structure and
 have a file *zicfs/some_band/cool.mp3* then its artist will be set to
 some_band and its album_name will not be set to anything.
 
+A track's title is extracted from the file name. It it delimited between the
+last occurence of " - " (if there is one) and the last "." prepending the
+extension. It is possible to replace " - " by another operator using *.meta*
+files. This means it will extract the title from the following file names as
+such:
+
+::
+
+    01 - My band - My Song.mp3  -> My Song
+    01 - My Song.mp3            -> My Song
+    my-song.mp3                 -> my-song
+
 Meta files
 ----------
 
