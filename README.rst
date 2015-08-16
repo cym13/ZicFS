@@ -126,7 +126,7 @@ Roadmap
     [ ] Build Vorbis comments by-directory tagging
     [ ] Add file-based additional tagging
     [ ] Get info files to work
-    [ ] Add the possibility to specify a directory pattern
+    [+] Add the possibility to specify a directory pattern
     [ ] Have fun!
 
 License
