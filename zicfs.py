@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+# coding: utf8
 
 """
 ZicFS: Music tagging filesystem
@@ -26,16 +27,18 @@ Patterns:
         artist:    Musician's name
         album:     Album's title
         year:      Year of release
+        genre:     Style of music
         any other: Ignore this layer's name
 """
 
-from __future__ import with_statement
+from __future__ import with_statement, unicode_literals
 
 import os
 import errno
 
 from docopt import docopt
 from fuse import FUSE, FuseOSError, Operations
+from mutagen.id3 import ID3, TIT2, TALB, TPE1, TDRC, TCON
 
 ########################################
 # Filesystem
@@ -161,15 +164,15 @@ class ZicFS(Passthrough):
         return Passthrough.__init__(self, root)
 
     def rename(self, old, new):
-        fp_old = self._full_path(old)
-        fp_new = self._full_path(new)
-        tag_from_path(fp_old, new, self.pattern)
-        return os.rename(fp_old, fp_new)
-
-    def create(self, path, mode, fi=None):
-        result = Passthrough.create(self, self._full_path(path), mode, fi)
-        tag_from_path(path, path, self.pattern)
+        result = Passthrough.rename(self, old, new)
+        tag_from_path(self._full_path(new), self.pattern)
         return result
+
+    def write(self, path, buf, offset, fh):
+        result = Passthrough.write(self, path, buf, offset, fh)
+        tag_from_path(self._full_path(path), self.pattern)
+        return result
+
 
 
 ########################################
@@ -177,22 +180,35 @@ class ZicFS(Passthrough):
 ########################################
 
 
-def tag_from_path(old, new, pattern):
-    print "Old path: " + old
-    print "New path: " + new
+def tag_from_path(path, pattern):
+    print "Path: " + path
 
-    infos = parse_path(new, pattern)
+    if not path.endswith(".mp3"):
+        return
 
-    print "Artist: " + str(infos.get("artist"))
-    print "Album:  " + str(infos.get("album"))
-    print "Track:  " + str(infos.get("track"))
+    audio = ID3(path)
+    infos = parse_path(path, pattern)
+
+    mp3_fields = { "artist": TPE1,
+                   "album":  TALB,
+                   "track":  TIT2,
+                   "genre":  TCON,
+                   "date":   TDRC }
+
+    for field in mp3_fields:
+        value = infos.get(field) or "None"
+        print field + ":" + value
+        if value:
+            audio.add(mp3_fields[field](encoding=3, text=value))
+
+    audio.save()
 
 
 def parse_path(path, pattern):
-    split_path    = [ x for x in path.split("/")    if x ]
-    split_pattern = [ x for x in pattern.split("/") if x ]
+    split_path    = [ x for x in path.split("/")[1:] if x ]
+    split_pattern = [ x for x in pattern.split("/")  if x ]
 
-    infos = { "track" : split_path.pop() }
+    infos = { "track" : split_path.pop().rsplit(".", 1)[0] }
 
     while split_path and split_pattern:
         infos[ split_pattern[0] ] = split_path[0]
