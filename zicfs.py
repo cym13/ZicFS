@@ -207,14 +207,14 @@ def id3_tag(path, infos):
         audio.save()
 
 
-def parse_path(path, pattern):
+def parse_path(path, pattern, sep=" - "):
     split_path    = [ x for x in path.split("/")[1:] if x ]
     split_pattern = [ x for x in pattern.split("/")  if x ]
 
     # Doesn't look easier with regex...
     track_title = ( split_path.pop()
-                              .rsplit(".",   1)[0]
-                              .rsplit(" - ", 1)[-1]
+                              .rsplit(".", 1)[0]
+                              .rsplit(sep, 1)[-1]
                               .strip() )
 
     infos = { "track" : track_title }
