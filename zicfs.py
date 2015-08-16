@@ -225,7 +225,7 @@ def parse_path(path, pattern):
 
 
 def main():
-    args = docopt(__doc__)
+    args = docopt(__doc__, version="0.2")
 
     args["--pattern"] = args.get("--pattern", "artist/album")
 
