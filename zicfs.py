@@ -186,19 +186,23 @@ def tag_from_path(path, pattern):
     infos = parse_path(path, pattern)
 
     if path.endswith(".mp3"):
+        id3_tag(path, infos)
+
+
+def id3_tag(path, infos):
         audio = ID3(path)
 
-        mp3_fields = { "artist": TPE1,
+        id3_fields = { "artist": TPE1,
                        "album":  TALB,
                        "track":  TIT2,
                        "style":  TCON,
                        "date":   TDRC }
 
-        for field in mp3_fields:
+        for field in id3_fields:
             value = infos.get(field) or "None"
-            print field + ":" + value
+            print field + " : " + value
             if value:
-                audio.add(mp3_fields[field](encoding=3, text=value))
+                audio.add(id3_fields[field](encoding=3, text=value))
 
         audio.save()
 
@@ -208,7 +212,10 @@ def parse_path(path, pattern):
     split_pattern = [ x for x in pattern.split("/")  if x ]
 
     # Doesn't look easier with regex...
-    track_title = split_path.pop().rsplit(".", 1)[0].rsplit(" - ", 1)[-1]
+    track_title = ( split_path.pop()
+                              .rsplit(".",   1)[0]
+                              .rsplit(" - ", 1)[-1]
+                              .strip() )
 
     infos = { "track" : track_title }
 
