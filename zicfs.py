@@ -27,7 +27,7 @@ Patterns:
         artist:    Musician's name
         album:     Album's title
         year:      Year of release
-        genre:     Style of music
+        style:     Style of music
         any other: Ignore this layer's name
 """
 
@@ -192,7 +192,7 @@ def tag_from_path(path, pattern):
     mp3_fields = { "artist": TPE1,
                    "album":  TALB,
                    "track":  TIT2,
-                   "genre":  TCON,
+                   "style":  TCON,
                    "date":   TDRC }
 
     for field in mp3_fields:

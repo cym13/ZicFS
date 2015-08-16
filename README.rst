@@ -17,7 +17,7 @@ Basics
 ZicFS's primary function is to tag files based on where they are placed in
 the directory structure. The default structure is as such:
 
-    zicfs/author_name/album_title/track_title
+    zicfs/artist_name/album_title/track_title
 
 Moving a file *baz* to *zicfs/foo/bar/baz* will automatically tag it with foo
 as author, bar as album title and baz as track_title. Those tags are set in
@@ -26,6 +26,10 @@ if you copy it to your phone for example, it will recognize the tags too.
 
 As this is a file system, you can use whatever you feel comfortable with to
 manage your files, it will still work.
+
+Tags are set from top to bottom. If you are using the default structure and
+have a file *zicfs/some_band/cool.mp3* then its artist will be set to
+some_band and its album_name will not be set to anything.
 
 Meta files
 ----------
@@ -106,6 +110,7 @@ Command-line interface documentation
             artist:    Musician's name
             album:     Album's title
             year:      Year of release
+            style:     Style of music
             any other: Ignore this layer's name
 
 Dependencies
