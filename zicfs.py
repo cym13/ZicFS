@@ -38,7 +38,13 @@ import errno
 
 from docopt import docopt
 from fuse import FUSE, FuseOSError, Operations
-from mutagen.id3 import ID3, TIT2, TALB, TPE1, TDRC, TCON, TRCK
+
+from mutagen.aac  import AAC
+from mutagen.mp4  import MP4
+from mutagen.m4a  import M4A
+from mutagen.flac import FLAC
+from mutagen.ogg  import OggFileType
+from mutagen.id3  import ID3, TIT2, TALB, TPE1, TDRC, TCON, TRCK
 
 ########################################
 # Filesystem
@@ -189,8 +195,11 @@ def tag_from_path(path, pattern):
                "tracknumber" : TRCK }
 
     tagger = { "mp3"  : (id3_tag,    ID3),
-               "ogg"  : (common_tag, OGG),
-               "flac" : (common_tag, FLAC) }
+               "aac"  : (common_tag, AAC),
+               "m4a"  : (common_tag, M4A),
+               "mp4"  : (common_tag, MP4),
+               "flac" : (common_tag, FLAC),
+               "ogg"  : (common_tag, OggFileType) }
 
     infos  = parse_path(path, pattern)
     ext    = path.rsplit(".", 1)[-1]
@@ -198,12 +207,13 @@ def tag_from_path(path, pattern):
     if ext not in tagger:
         return
 
+    print "Path: " + path
+
     tag, driver = tagger[ext]
     audio       = driver(path)
 
-    print "Path: " + path
     for field in fields:
-        value = infos.get(field) or "None"
+        value = unicode(infos.get(field, ""))
         print field.title() + ": " + value
         if value:
             tag(audio, field, value, fields)
@@ -217,18 +227,14 @@ def id3_tag(audio, field, value, fields):
 
 
 def common_tag(audio, field, value, fields):
-    return audio[field] = value
+    audio[field] = value
 
 
 def parse_path(path, pattern, sep=" - "):
     split_path    = [ x for x in path.split("/")[1:] if x ]
     split_pattern = [ x for x in pattern.split("/")  if x ]
 
-    # Doesn't look easier with regex...
-    track_number, track_title = map( str.strip,
-                                     split_path.pop()
-                                               .rsplit(".", 1)[0]
-                                               .split(sep)[0,-1] )
+    track_number, track_title = parse_filename(split_path.pop(), sep)
 
     infos = { "title" : track_title }
 
@@ -242,6 +248,15 @@ def parse_path(path, pattern, sep=" - "):
         split_pattern = split_pattern[1:]
 
     return infos
+
+
+def parse_filename(filename, sep):
+    name   = filename.rsplit(".", 1)[0]
+    s_name = name.split(sep)
+    number = s_name[0].strip()
+    title  = s_name[-1].strip()
+
+    return number, title
 
 
 ########################################
