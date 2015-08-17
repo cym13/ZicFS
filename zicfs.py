@@ -204,11 +204,12 @@ def tag_from_path(path, pattern):
     print "Path: " + path
     for field in fields:
         value = infos.get(field) or "None"
-        print field + ": " + value
+        print field.title() + ": " + value
         if value:
             tag(audio, field, value, fields)
 
     audio.save()
+    print "--------------------------------"
 
 
 def id3_tag(audio, field, value, fields):
