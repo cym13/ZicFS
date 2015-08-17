@@ -39,12 +39,16 @@ import errno
 from docopt import docopt
 from fuse import FUSE, FuseOSError, Operations
 
+from mutagen.id3  import ID3, TIT2, TALB, TPE1, TDRC, TCON, TRCK
 from mutagen.aac  import AAC
 from mutagen.mp4  import MP4
 from mutagen.m4a  import M4A
 from mutagen.flac import FLAC
-from mutagen.ogg  import OggFileType
-from mutagen.id3  import ID3, TIT2, TALB, TPE1, TDRC, TCON, TRCK
+from mutagen.oggvorbis import OggVorbis
+from mutagen.oggflac   import OggFlac
+from mutagen.oggopus   import OggOpus
+from mutagen.oggspeex  import OggSpeex
+from mutagen.oggtheora import OggTheora
 
 ########################################
 # Filesystem
@@ -199,7 +203,7 @@ def tag_from_path(path, pattern):
                "m4a"  : (common_tag, M4A),
                "mp4"  : (common_tag, MP4),
                "flac" : (common_tag, FLAC),
-               "ogg"  : (common_tag, OggFileType) }
+               "ogg"  : (common_tag, OGG) }
 
     infos  = parse_path(path, pattern)
     ext    = path.rsplit(".", 1)[-1]
@@ -211,6 +215,10 @@ def tag_from_path(path, pattern):
 
     tag, driver = tagger[ext]
     audio       = driver(path)
+
+    if audio is None:
+        print "Could not load file"
+        return
 
     for field in fields:
         value = unicode(infos.get(field, ""))
@@ -228,6 +236,15 @@ def id3_tag(audio, field, value, fields):
 
 def common_tag(audio, field, value, fields):
     audio[field] = value
+
+
+def OGG(path):
+    # I didn't find a clean way to get the ogg type so let's try everything!
+    for driver in (OggVorbis, OggFlac, OggOpus, OggSpeex, OggTheora):
+        try:
+            return driver(path)
+        except:
+            continue
 
 
 def parse_path(path, pattern, sep=" - "):
