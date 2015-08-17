@@ -33,15 +33,16 @@ some_band and its album_name will not be set to anything.
 
 A track's title is extracted from the file name. It it delimited between the
 last occurence of " - " (if there is one) and the last "." prepending the
-extension. It is possible to replace " - " by another operator using *.meta*
-files. This means it will extract the title from the following file names as
-such:
+extension. If the first field delimited by " - " is numeric, it is considered
+the tracks position in the album. It is possible to replace " - " by another
+operator using *.meta* files. This means it will extract the title from the
+following file names as such:
 
 ::
 
-    01 - My band - My Song.mp3  -> My Song
-    01 - My Song.mp3            -> My Song
-    my-song.mp3                 -> my-song
+    01 - My band - My Song.mp3  -> title: My Song ; position: 01
+    01 - My Song.mp3            -> title: My Song ; position: 01
+    my-song.mp3                 -> title: my-song
 
 Meta files
 ----------

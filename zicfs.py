@@ -38,7 +38,7 @@ import errno
 
 from docopt import docopt
 from fuse import FUSE, FuseOSError, Operations
-from mutagen.id3 import ID3, TIT2, TALB, TPE1, TDRC, TCON
+from mutagen.id3 import ID3, TIT2, TALB, TPE1, TDRC, TCON, TRCK
 
 ########################################
 # Filesystem
@@ -212,12 +212,15 @@ def parse_path(path, pattern, sep=" - "):
     split_pattern = [ x for x in pattern.split("/")  if x ]
 
     # Doesn't look easier with regex...
-    track_title = ( split_path.pop()
-                              .rsplit(".", 1)[0]
-                              .rsplit(sep, 1)[-1]
-                              .strip() )
+    track_number, track_title = map( str.strip,
+                                     split_path.pop()
+                                               .rsplit(".", 1)[0]
+                                               .split(sep)[0,-1] )
 
-    infos = { "track" : track_title }
+    infos = { "title" : track_title }
+
+    if track_number.isnumeric():
+        infos["tracknumber"] = int(track_number)
 
     while split_path and split_pattern:
         infos[ split_pattern[0] ] = split_path[0]
