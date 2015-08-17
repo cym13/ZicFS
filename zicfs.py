@@ -181,30 +181,42 @@ class ZicFS(Passthrough):
 
 
 def tag_from_path(path, pattern):
+    fields = { "artist"      : TPE1,
+               "album"       : TALB,
+               "date"        : TDRC,
+               "style"       : TCON,
+               "title"       : TIT2,
+               "tracknumber" : TRCK }
+
+    tagger = { "mp3"  : (id3_tag,    ID3),
+               "ogg"  : (common_tag, OGG),
+               "flac" : (common_tag, FLAC) }
+
+    infos  = parse_path(path, pattern)
+    ext    = path.rsplit(".", 1)[-1]
+
+    if ext not in tagger:
+        return
+
+    tag, driver = tagger[ext]
+    audio       = driver(path)
+
     print "Path: " + path
+    for field in fields:
+        value = infos.get(field) or "None"
+        print field + ": " + value
+        if value:
+            tag(audio, field, value, fields)
 
-    infos = parse_path(path, pattern)
-
-    if path.endswith(".mp3"):
-        id3_tag(path, infos)
+    audio.save()
 
 
-def id3_tag(path, infos):
-        audio = ID3(path)
+def id3_tag(audio, field, value, fields):
+    return audio.add(fields[field](encoding=3, text=value))
 
-        id3_fields = { "artist": TPE1,
-                       "album":  TALB,
-                       "track":  TIT2,
-                       "style":  TCON,
-                       "date":   TDRC }
 
-        for field in id3_fields:
-            value = infos.get(field) or "None"
-            print field + " : " + value
-            if value:
-                audio.add(id3_fields[field](encoding=3, text=value))
-
-        audio.save()
+def common_tag(audio, field, value, fields):
+    return audio[field] = value
 
 
 def parse_path(path, pattern, sep=" - "):
