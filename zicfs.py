@@ -45,7 +45,7 @@ from mutagen.mp4  import MP4
 from mutagen.m4a  import M4A
 from mutagen.flac import FLAC
 from mutagen.oggvorbis import OggVorbis
-from mutagen.oggflac   import OggFlac
+from mutagen.oggflac   import OggFLAC
 from mutagen.oggopus   import OggOpus
 from mutagen.oggspeex  import OggSpeex
 from mutagen.oggtheora import OggTheora
@@ -240,7 +240,7 @@ def common_tag(audio, field, value, fields):
 
 def OGG(path):
     # I didn't find a clean way to get the ogg type so let's try everything!
-    for driver in (OggVorbis, OggFlac, OggOpus, OggSpeex, OggTheora):
+    for driver in (OggVorbis, OggFLAC, OggOpus, OggSpeex, OggTheora):
         try:
             return driver(path)
         except:
