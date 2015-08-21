@@ -31,9 +31,10 @@ Patterns:
         any other: Ignore this layer's name
 """
 
-from __future__ import with_statement, unicode_literals
+from __future__ import with_statement, unicode_literals, print_function
 
 import os
+import sys
 import errno
 
 from docopt import docopt
@@ -211,23 +212,28 @@ def tag_from_path(path, pattern):
     if ext not in tagger:
         return
 
-    print "Path: " + path
+    print("Path:", path)
 
     tag, driver = tagger[ext]
-    audio       = driver(path)
+
+    try:
+        audio = driver(path)
+    except ID3NoHeaderError as e:
+        print("Could not load file:", e, file=sys.stderr)
+        return
 
     if audio is None:
-        print "Could not load file"
+        print("Could not load file", file=sys.stderr)
         return
 
     for field in fields:
         value = unicode(infos.get(field, ""))
-        print field.title() + ": " + value
+        print(field.title(), ":", value)
         if value:
             tag(audio, field, value, fields)
 
     audio.save()
-    print "--------------------------------"
+    print("--------------------------------")
 
 
 def id3_tag(audio, field, value, fields):
