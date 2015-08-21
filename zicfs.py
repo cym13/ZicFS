@@ -51,6 +51,8 @@ from mutagen.oggopus   import OggOpus
 from mutagen.oggspeex  import OggSpeex
 from mutagen.oggtheora import OggTheora
 
+from mutagen.id3  import ID3NoHeaderError
+
 ########################################
 # Filesystem
 ########################################
@@ -226,7 +228,7 @@ def tag_from_path(path, pattern):
     try:
         audio = driver(path)
     except ID3NoHeaderError as e:
-        print("Could not load file:", e, file=sys.stderr)
+        print("Could not tag file:", e, file=sys.stderr)
         return
 
     if audio is None:
