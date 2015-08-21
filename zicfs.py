@@ -171,6 +171,7 @@ class ZicFS(Passthrough):
     """ FUSE filesystem managing music file metadata """
 
     def __init__(self, root, pattern):
+        self.writing = False
         self.pattern = pattern
         return Passthrough.__init__(self, root)
 
@@ -181,9 +182,15 @@ class ZicFS(Passthrough):
 
     def write(self, path, buf, offset, fh):
         result = Passthrough.write(self, path, buf, offset, fh)
-        tag_from_path(self._full_path(path), self.pattern)
+        self.writing = True
         return result
 
+    def flush(self, path, fh):
+        result = Passthrough.flush(self, path, fh)
+        if self.writing:
+            tag_from_path(self._full_path(path), self.pattern)
+            self.writing = False
+        return result
 
 
 ########################################
